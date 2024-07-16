@@ -1,0 +1,4 @@
+services:
+  - name: web
+    start_command: node src/index.js
+    env: node
