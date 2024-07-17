@@ -41,6 +41,8 @@ exports.loginUser = async (req, res) => {
 
         const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+        delete user.password;
+
         // Senha válida - prossiga com a autenticação (JWT, sessão, etc.)
         res.status(200).json({ user, token });
     } catch (error) {

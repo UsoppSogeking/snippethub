@@ -22,10 +22,6 @@ const User = sequelize.define('User', {
         type: DataTypes.TEXT,
         allowNull: true
     }
-}, {
-    defaultScope: {
-        attributes: { exclude: ['password'] }
-    }
 });
 
 module.exports = User;
