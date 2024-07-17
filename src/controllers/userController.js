@@ -42,7 +42,7 @@ exports.loginUser = async (req, res) => {
         const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Senha válida - prossiga com a autenticação (JWT, sessão, etc.)
-        res.status(200).json({ message: 'Login bem-sucedido', token });
+        res.status(200).json(user, token);
     } catch (error) {
         console.error('Erro ao fazer login:', error);
         res.status(500).json({ error: 'Erro interno ao fazer login' });
