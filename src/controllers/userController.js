@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 
 //Criar um novo usuário
 exports.createUser = async (req, res) => {
@@ -64,6 +65,29 @@ exports.getUserById = async (req, res) => {
     } catch (error) {
         console.error('Erro ao buscar usuário:', error);
         res.status(500).json({ error: 'Erro interno ao buscar usuário' });
+    }
+}
+
+exports.getUserByName = async (req, res) => {
+    try {
+        const username = req.query.username ? `${req.query.username}` : null;
+
+        let whereClause = {};
+
+        if (username) {
+            whereClause.username = { [Op.like]: username };
+        }
+
+        const users = await User.findAll({ where: whereClause });
+
+        if (users.length === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Erro ao buscar usuários: ', error);
+        res.status(500).json({ error: 'Ocorreu um erro interno ao buscar usuários' });
     }
 }
 
