@@ -78,7 +78,7 @@ exports.getUserByName = async (req, res) => {
             whereClause.username = { [Op.like]: username };
         }
 
-        const users = await User.findAll({ where: whereClause });
+        const users = await User.findAll({ where: whereClause, attributes: {exclude: ['password']} });
 
         if (users.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
