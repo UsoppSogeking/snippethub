@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const upload = require('../config/multerConfig');
 
+const multer = upload.single('profile_picture');
+
 //Criar um novo usuário
 exports.createUser = async (req, res) => {
     try {
@@ -107,27 +109,33 @@ exports.getAllUsers = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        const userId = req.params.id;
-        const { username } = req.body;
-        let profile_picture = req.file ? req.file.filename : null;
+        multer(req, res, async (err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Erro ao fazer upload do arquivo' });
+            }
 
-        const user = await User.findByPk(userId);
+            const userId = req.params.id;
+            const { username } = req.body;
+            let profile_picture = req.file ? req.file.filename : null;
 
-        if (!user) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
-        }
+            const user = await User.findByPk(userId);
 
-        if (username) {
-            user.username = username;
-        }
+            if (!user) {
+                return res.status(404).json({ error: 'Usuário não encontrado' });
+            }
 
-        if (profile_picture) {
-            user.profile_picture = profile_picture;
-        }
+            if (username) {
+                user.username = username;
+            }
 
-        await user.save();
+            if (profile_picture) {
+                user.profile_picture = profile_picture;
+            }
 
-        res.status(200).json({ message: 'Dados do usuario atualizado com sucesso', user });
+            await user.save();
+
+            res.status(200).json({ message: 'Dados do usuario atualizado com sucesso', user });
+        });
     } catch (error) {
         console.error('Erro ao atualizar nome do usuário', error);
         res.status(500).json({ error: 'Erro interno ao atualizar nome do usuário' });
