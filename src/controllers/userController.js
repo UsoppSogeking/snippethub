@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const upload = require('../config/multerConfig');
 
 //Criar um novo usuário
 exports.createUser = async (req, res) => {
@@ -78,7 +79,7 @@ exports.getUserByName = async (req, res) => {
             whereClause.username = { [Op.like]: username };
         }
 
-        const users = await User.findAll({ where: whereClause, attributes: {exclude: ['password']} });
+        const users = await User.findAll({ where: whereClause, attributes: { exclude: ['password'] } });
 
         if (users.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -107,7 +108,8 @@ exports.getAllUsers = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { username, profile_picture } = req.body;
+        const { username } = req.body;
+        let profile_picture = req.file ? req.file.filename : null;
 
         const user = await User.findByPk(userId);
 
