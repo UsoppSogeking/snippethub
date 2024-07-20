@@ -2,9 +2,6 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
-const upload = require('../config/multerConfig');
-
-const multer = upload.single('profile_picture');
 
 //Criar um novo usuário
 exports.createUser = async (req, res) => {
@@ -81,7 +78,7 @@ exports.getUserByName = async (req, res) => {
             whereClause.username = { [Op.like]: username };
         }
 
-        const users = await User.findAll({ where: whereClause, attributes: { exclude: ['password'] } });
+        const users = await User.findAll({ where: whereClause, attributes: {exclude: ['password']} });
 
         if (users.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -109,33 +106,26 @@ exports.getAllUsers = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        multer(req, res, async (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Erro ao fazer upload do arquivo' });
-            }
+        const userId = req.params.id;
+        const { username, profile_picture } = req.body;
 
-            const userId = req.params.id;
-            const { username } = req.body;
-            let profile_picture = req.file ? req.file.filename : null;
+        const user = await User.findByPk(userId);
 
-            const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
 
-            if (!user) {
-                return res.status(404).json({ error: 'Usuário não encontrado' });
-            }
+        if (username) {
+            user.username = username;
+        }
 
-            if (username) {
-                user.username = username;
-            }
+        if (profile_picture) {
+            user.profile_picture = profile_picture;
+        }
 
-            if (profile_picture) {
-                user.profile_picture = profile_picture;
-            }
+        await user.save();
 
-            await user.save();
-
-            res.status(200).json({ message: 'Dados do usuario atualizado com sucesso', user });
-        });
+        res.status(200).json({ message: 'Dados do usuario atualizado com sucesso', user });
     } catch (error) {
         console.error('Erro ao atualizar nome do usuário', error);
         res.status(500).json({ error: 'Erro interno ao atualizar nome do usuário' });
