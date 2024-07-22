@@ -57,6 +57,23 @@ exports.getSnippets = async (req, res) => {
     }
 };
 
+exports.getUserSnippetsById = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const snippets = await Snippet.findAll({where: {user_id: userId}});
+
+        if (snippets.length === 0) {
+            return res.status(404).json({ error: 'Nenhum snippet encontrado para este usuário' });
+        }
+
+        res.status(200).json(snippets);
+    } catch (error) {
+        console.error('Erro ao buscar snippets do usuário: ', error);
+        res.status(500).json({ error: 'Ocorreu um erro interno ao buscar snippets do usuário' });
+    }
+}
+
 exports.updateSnippet = async (req, res) => {
     try {
         const snippetId = req.params.id;
