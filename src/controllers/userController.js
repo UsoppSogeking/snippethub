@@ -2,7 +2,6 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
-require('dotenv').config();
 
 const baseUrl = 'https://snippethub.onrender.com';
 
