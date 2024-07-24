@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./User');
-const Comment = require('./Comment');
 
 const Snippet = sequelize.define('Snippet', {
     title: {
