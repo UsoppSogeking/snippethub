@@ -107,7 +107,7 @@ exports.getAllUsers = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { username, profile_picture } = req.body;
+        const { username } = req.body;
 
         const user = await User.findByPk(userId);
 
@@ -119,8 +119,8 @@ exports.updateUser = async (req, res) => {
             user.username = username;
         }
 
-        if (profile_picture) {
-            user.profile_picture = profile_picture;
+        if (req.file) {
+            user.profile_picture = req.file.path;
         }
 
         await user.save();

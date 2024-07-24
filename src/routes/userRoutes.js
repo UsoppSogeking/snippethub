@@ -2,6 +2,7 @@ const express = require('express');
 const { createUser, loginUser, getUserById, updateUser, getAllUsers, deleteUser, getUserByName } = require('../controllers/userController');
 const validateUser = require('../middlewares/validateUser');
 const authenticateToken = require('../middlewares/authenticateToken');
+const upload = require('../middlewares/uploadMiddleware');
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post('/login', loginUser);//login
 router.get('/users/:id', authenticateToken, getUserById);
 router.get('/getuserbyname', authenticateToken, getUserByName);
 router.get('/users', authenticateToken, getAllUsers);//obter todos os usuário
-router.put('/users/:id', authenticateToken, updateUser);
+router.put('/users/:id', authenticateToken, upload.single('profile_picture'), updateUser);
 router.delete('/users/:id', authenticateToken, deleteUser);
 
 module.exports = router;
