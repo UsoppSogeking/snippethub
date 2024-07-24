@@ -26,6 +26,4 @@ Snippet.belongsTo(User, {
     foreignKey: 'user_id',
 });
 
-Snippet.hasMany(Comment, { foreignKey: 'snippet_id', onDelete: 'CASCADE' });
-
 module.exports = Snippet;

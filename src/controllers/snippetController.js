@@ -127,30 +127,18 @@ exports.updateSnippet = async (req, res) => {
 }
 
 exports.deleteSnippet = async (req, res) => {
-    const transaction = await sequelize.transaction();
-
     try {
         const snippetId = req.params.id;
-        const snippet = await Snippet.findByPk(snippetId, { transaction });
+        const snippet = await Snippet.findByPk(snippetId);
 
         if (!snippet) {
-            return res.status(404).json({ error: 'Snippet não encontrado' });
+            res.status(404).json({ error: 'Snippet não econtrado' });
         }
 
-        // Excluir todos os comentários associados ao snippet
-        await Comment.destroy({
-            where: { snippet_id: snippetId },
-            transaction
-        });
-
-        // Excluir o snippet
-        await snippet.destroy({ transaction });
-
-        await transaction.commit();
+        await snippet.destroy();
 
         res.status(200).json({ message: 'Snippet deletado com sucesso!', snippet });
     } catch (error) {
-        await transaction.rollback();
         console.error('Erro ao deletar snippet: ', error);
         res.status(500).json({ error: 'Ocorreu um erro interno ao deletar snippet' });
     }
