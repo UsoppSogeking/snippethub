@@ -61,6 +61,10 @@ exports.getUserById = async (req, res) => {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
+        if (user.profile_picture) {
+            user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
+        }
+
         res.status(200).json(user);
     } catch (error) {
         console.error('Erro ao buscar usuário:', error);
@@ -83,6 +87,12 @@ exports.getUserByName = async (req, res) => {
         if (users.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
+
+        users.forEach(user => {
+            if (user.profile_picture) {
+                user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
+            }
+        });
 
         res.status(200).json(users);
     } catch (error) {
@@ -120,7 +130,7 @@ exports.updateUser = async (req, res) => {
         }
 
         if (req.file) {
-            user.profile_picture = req.file.path;
+            user.profile_picture = user.profile_picture = `${baseUrl}/uploads/profile_picture/${req.file.filename}`;
         }
 
         await user.save();
