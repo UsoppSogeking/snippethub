@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 require('dotenv').config();
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+const baseUrl = 'https://snippethub.onrender.com';
 
 //Criar um novo usuário
 exports.createUser = async (req, res) => {
