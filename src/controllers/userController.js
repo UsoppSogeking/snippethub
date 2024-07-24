@@ -65,8 +65,11 @@ exports.getUserById = async (req, res) => {
         }
 
         if (user.profile_picture) {
-            user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
+            if (!user.profile_picture.startsWith('http')) {
+                user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
+            }
         }
+        
 
         res.status(200).json(user);
     } catch (error) {
