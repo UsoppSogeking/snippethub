@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const Snippet = require('../models/Snippet');
 const User = require('../models/User');
+const Comment = require('../models/Comment');
 
 exports.createSnippet = async (req, res) => {
     try {
@@ -78,7 +79,7 @@ exports.getUserSnippetsById = async (req, res) => {
     try {
         const userId = req.params.userId;
 
-        const snippets = await Snippet.findAll({where: {user_id: userId}});
+        const snippets = await Snippet.findAll({ where: { user_id: userId } });
 
         if (snippets.length === 0) {
             return res.status(404).json({ error: 'Nenhum snippet encontrado para este usuário' });
@@ -134,6 +135,8 @@ exports.deleteSnippet = async (req, res) => {
         if (!snippet) {
             res.status(404).json({ error: 'Snippet não econtrado' });
         }
+
+        await Comment.destroy({ where: { snippet_id: snippetId } });
 
         await snippet.destroy();
 
