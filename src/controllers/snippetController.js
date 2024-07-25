@@ -23,7 +23,7 @@ exports.createSnippet = async (req, res) => {
             user_id: userId,
         });
 
-        res.status(200).json(newSnippet);
+        res.status(201).json(newSnippet);
     } catch (error) {
         console.error('Erro ao criar o snippet:', error);
         res.status(500).json({ error: 'Erro ao criar o snippet' });
@@ -48,7 +48,7 @@ exports.getSnippets = async (req, res) => {
         const snippets = await Snippet.findAll({ where: whereClause });
 
         if (snippets.length === 0) {
-            return res.status(404).json({ error: 'Snippet não encontrado' });
+            return res.status(404).json({ message: 'Snippets não encontrados' });
         }
 
         res.status(200).json(snippets);
@@ -65,7 +65,7 @@ exports.getSnippetById = async (req, res) => {
         const snippet = await Snippet.findByPk(snippetId);
 
         if (!snippet) {
-            return res.status(404).json({ error: 'Snippet não encontrado' });
+            return res.status(404).json({ message: 'Snippet não encontrado' });
         }
 
         res.status(200).json(snippet);
@@ -82,7 +82,7 @@ exports.getUserSnippetsById = async (req, res) => {
         const snippets = await Snippet.findAll({ where: { user_id: userId } });
 
         if (snippets.length === 0) {
-            return res.status(404).json({ error: 'Nenhum snippet encontrado para este usuário' });
+            return res.status(404).json({ message: 'Nenhum snippet encontrado para este usuário' });
         }
 
         res.status(200).json(snippets);
@@ -99,7 +99,7 @@ exports.updateSnippet = async (req, res) => {
         const snippet = await Snippet.findByPk(snippetId);
 
         if (!snippet) {
-            res.status(404).json({ error: 'Snippet não encontrado' });
+            return res.status(404).json({ message: 'Snippet não encontrado' });
         }
 
         if (title) {
@@ -133,7 +133,7 @@ exports.deleteSnippet = async (req, res) => {
         const snippet = await Snippet.findByPk(snippetId);
 
         if (!snippet) {
-            res.status(404).json({ error: 'Snippet não econtrado' });
+            return res.status(404).json({ message: 'Snippet não econtrado' });
         }
 
         await Comment.destroy({ where: { snippet_id: snippetId } });
