@@ -1,9 +1,11 @@
 const userSchema = require('../validators/userValidation');
 
 const validateUser = (req, res, next) => {
-    const { error } = userSchema.validate(req.body);
+    const { error } = userSchema.validate(req.body, { abortEarly: false });
     if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        const errors = error.details.map((err) => err.message);
+        res.status(422).json({ errors });
+        return;
     }
     next();
 };

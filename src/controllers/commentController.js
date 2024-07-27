@@ -9,7 +9,8 @@ exports.createComment = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     const newComment = await Comment.create({
@@ -30,6 +31,7 @@ exports.getCommentsBySnippetId = async (req, res) => {
 
     if (!comments) {
         res.status(404).json({ error: 'Nenhum comentário encontrado' });
+        return;
     }
 
     res.status(200).json(comments);
@@ -43,6 +45,7 @@ exports.updateComment = async (req, res) => {
 
     if (!comment) {
         res.status(404).json({ error: 'Comentário não econtrado' });
+        return;
     }
 
     comment.content = content;
@@ -57,6 +60,7 @@ exports.deleteComment = async (req, res) => {
 
     if (!comment) {
         res.status(404).json({ error: 'Comentário não encontrado' });
+        return;
     }
 
     await comment.destroy();

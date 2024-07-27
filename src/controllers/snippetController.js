@@ -10,7 +10,8 @@ exports.createSnippet = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     const newSnippet = await Snippet.create({
@@ -42,7 +43,8 @@ exports.getSnippets = async (req, res) => {
     const snippets = await Snippet.findAll({ where: whereClause });
 
     if (snippets.length === 0) {
-        return res.status(404).json({ error: 'Snippets não encontrados' });
+        res.status(404).json({ error: 'Snippets não encontrados' });
+        return;
     }
 
     res.status(200).json(snippets);
@@ -54,7 +56,8 @@ exports.getSnippetById = async (req, res) => {
     const snippet = await Snippet.findByPk(snippetId);
 
     if (!snippet) {
-        return res.status(404).json({ error: 'Snippet não encontrado' });
+        res.status(404).json({ error: 'Snippet não encontrado' });
+        return;
     }
 
     res.status(200).json(snippet);
@@ -66,7 +69,8 @@ exports.getUserSnippetsById = async (req, res) => {
     const snippets = await Snippet.findAll({ where: { user_id: userId } });
 
     if (snippets.length === 0) {
-        return res.status(404).json({ error: 'Nenhum snippet encontrado para este usuário' });
+        res.status(404).json({ error: 'Nenhum snippet encontrado para este usuário' });
+        return;
     }
 
     res.status(200).json(snippets);
@@ -74,11 +78,12 @@ exports.getUserSnippetsById = async (req, res) => {
 
 exports.updateSnippet = async (req, res) => {
     const snippetId = req.params.id;
-    const { title, description, code, language } = req.body;
+    const { title, description, code, language, tags } = req.body;
     const snippet = await Snippet.findByPk(snippetId);
 
     if (!snippet) {
-        return res.status(404).json({ error: 'Snippet não encontrado' });
+        res.status(404).json({ error: 'Snippet não encontrado' });
+        return;
     }
 
     if (title) {
@@ -97,6 +102,10 @@ exports.updateSnippet = async (req, res) => {
         snippet.language = language;
     }
 
+    if (tags) {
+        snippet.tags = tags;
+    }
+
     await snippet.save();
 
     res.status(200).json({ message: 'Snippet atualiado com sucesso!', snippet });
@@ -107,7 +116,8 @@ exports.deleteSnippet = async (req, res) => {
     const snippet = await Snippet.findByPk(snippetId);
 
     if (!snippet) {
-        return res.status(404).json({ error: 'Snippet não econtrado' });
+        res.status(404).json({ error: 'Snippet não econtrado' });
+        return;
     }
 
     await Comment.destroy({ where: { snippet_id: snippetId } });

@@ -6,11 +6,12 @@ const { Op } = require('sequelize');
 const baseUrl = 'https://snippethub.onrender.com';
 
 exports.createUser = async (req, res) => {
-    const { username, email, password, profile_picture } = req.body;
+    const { username, email, password } = req.body;
 
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-        return res.status(401).json({ error: "Por favor, utilize outro e-mail" });
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+        res.status(422).json({ error: "Por favor, utilize outro e-mail" });
+        return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,10 +20,16 @@ exports.createUser = async (req, res) => {
         username,
         email,
         password: hashedPassword,
-        profile_picture
     });
 
-    res.status(201).json({ message: 'Registro bem sucedido', user: newUser });
+    const token = jwt.sign({ id: newUser.id, email: newUser.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    if (!newUser) {
+        res.status(422).json({ errors: ["Houve um erro, por favor tente mais tarde."] });
+        return;
+    }
+
+    res.status(201).json({ _id: newUser.id, token });
 };
 
 exports.loginUser = async (req, res) => {
@@ -30,13 +37,15 @@ exports.loginUser = async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-        return res.status(401).json({ error: 'Credenciais inválidas' });
+        res.status(401).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-        return res.status(401).json({ error: 'Credenciais inválidas' });
+        res.status(401).json({ error: 'Senha inválida.' });
+        return;
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -51,7 +60,8 @@ exports.getUserById = async (req, res) => {
     });
 
     if (!user) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     if (user.profile_picture) {
@@ -75,7 +85,8 @@ exports.getUserByName = async (req, res) => {
     const users = await User.findAll({ where: whereClause, attributes: { exclude: ['password'] } });
 
     if (users.length === 0) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     users.forEach(user => {
@@ -94,7 +105,8 @@ exports.updateUser = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     if (username) {
@@ -115,7 +127,8 @@ exports.deleteUser = async (req, res) => {
     const user = await User.findByPk(userId);
 
     if (!user) {
-        return res.status(404).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
+        return;
     }
 
     await user.destroy();
