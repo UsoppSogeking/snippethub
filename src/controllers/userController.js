@@ -84,11 +84,6 @@ exports.getUserByName = async (req, res) => {
 
     const users = await User.findAll({ where: whereClause, attributes: { exclude: ['password'] } });
 
-    if (users.length === 0) {
-        res.status(404).json({ error: 'Usuário não encontrado' });
-        return;
-    }
-
     users.forEach(user => {
         if (user.profile_picture) {
             user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
@@ -97,6 +92,7 @@ exports.getUserByName = async (req, res) => {
 
     res.status(200).json(users);
 }
+
 
 exports.updateUser = async (req, res) => {
     const userId = req.params.id;

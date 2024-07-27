@@ -68,11 +68,6 @@ exports.getUserSnippetsById = async (req, res) => {
 
     const snippets = await Snippet.findAll({ where: { user_id: userId } });
 
-    if (snippets.length === 0) {
-        res.status(404).json({ error: 'Nenhum snippet encontrado para este usuário' });
-        return;
-    }
-
     res.status(200).json(snippets);
 }
 
