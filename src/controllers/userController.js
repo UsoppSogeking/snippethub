@@ -84,11 +84,11 @@ exports.getUserByName = async (req, res) => {
 
     const users = await User.findAll({ where: whereClause, attributes: { exclude: ['password'] } });
 
-    users.forEach(user => {
-        if (user.profile_picture) {
-            user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
-        }
-    });
+    // users.forEach(user => {
+    //     if (user.profile_picture) {
+    //         user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
+    //     }
+    // });
 
     res.status(200).json(users);
 }
