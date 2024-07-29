@@ -115,7 +115,7 @@ exports.updateUser = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ message: 'Dados do usuario atualizado com sucesso', user });
+    res.status(200).json({ message: 'Dados do usuario atualizado com sucesso' });
 }
 
 exports.deleteUser = async (req, res) => {
