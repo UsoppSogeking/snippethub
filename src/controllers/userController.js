@@ -37,14 +37,14 @@ exports.loginUser = async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-        res.status(401).json({ error: 'Usuário não encontrado' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
         return;
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-        res.status(401).json({ error: 'Senha inválida.' });
+        res.status(422).json({ error: 'Senha inválida.' });
         return;
     }
 
@@ -115,7 +115,7 @@ exports.updateUser = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ message: 'Dados do usuario atualizado com sucesso' });
+    res.status(200).json({ message: 'Dados do usuario atualizado com sucesso', user });
 }
 
 exports.deleteUser = async (req, res) => {
