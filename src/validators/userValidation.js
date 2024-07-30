@@ -1,4 +1,3 @@
-//Schema de Validação com Joi
 const Joi = require('joi');
 
 const userSchema = Joi.object({

@@ -97,7 +97,7 @@ exports.updateUser = async (req, res) => {
         user.username = username;
     }
 
-    if (req.file) {
+    if (profile_picture) {
         user.profile_picture = profile_picture;
     }
 
