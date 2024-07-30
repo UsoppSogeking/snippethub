@@ -64,12 +64,6 @@ exports.getUserById = async (req, res) => {
         return;
     }
 
-    // if (user.profile_picture) {
-    //     if (!user.profile_picture.startsWith('http')) {
-    //         user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
-    //     }
-    // }
-
     res.status(200).json(user);
 }
 
@@ -84,19 +78,13 @@ exports.getUserByName = async (req, res) => {
 
     const users = await User.findAll({ where: whereClause, attributes: { exclude: ['password'] } });
 
-    // users.forEach(user => {
-    //     if (user.profile_picture) {
-    //         user.profile_picture = `${baseUrl}/uploads/profile_picture/${user.profile_picture}`;
-    //     }
-    // });
-
     res.status(200).json(users);
 }
 
 
 exports.updateUser = async (req, res) => {
     const userId = req.params.id;
-    const { username } = req.body;
+    const { username, profile_picture } = req.body;
 
     const user = await User.findByPk(userId);
 
@@ -110,7 +98,7 @@ exports.updateUser = async (req, res) => {
     }
 
     if (req.file) {
-        user.profile_picture = `${baseUrl}/uploads/profile_picture/${req.file.filename}`;
+        user.profile_picture = profile_picture;
     }
 
     await user.save();
